@@ -963,3 +963,196 @@ h1, h2, h3, h4 {
     background-color: #f1f5f9;
 }
 
+/* Disabled State for Buttons */
+.btn:disabled, .btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Mark Tag (Search Highlighting) */
+mark {
+    background-color: rgba(245, 158, 11, 0.35); /* Amber background with opacity */
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 2px;
+}
+:root.light-theme mark {
+    background-color: rgba(245, 158, 11, 0.25);
+}
+
+/* Loading Overlay for Tweet Editor */
+.tweet-editor {
+    position: relative;
+}
+.tweet-editor.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 5;
+}
+.tweet-editor.loading textarea {
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+/* Skeletons Loading Styles */
+.skeleton-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.skeleton-line {
+    background-color: var(--bg-tertiary);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-line.badge-line {
+    width: 80px;
+    height: 20px;
+}
+
+.skeleton-line.text-1 { width: 100%; height: 16px; }
+.skeleton-line.text-2 { width: 92%; height: 16px; }
+.skeleton-line.text-3 { width: 75%; height: 16px; }
+
+.skeleton-line.btn-line {
+    width: 110px;
+    height: 32px;
+    margin-left: auto;
+    margin-top: 8px;
+}
+
+/* Shimmer Animation */
+.skeleton-line::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.05), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+:root.light-theme .skeleton-line::before {
+    background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.03), transparent);
+}
+
+@keyframes shimmer {
+    0% { left: -150px; }
+    100% { left: 100%; }
+}
+
+/* Mobile Responsive Adjustments */
+.mobile-menu-btn, .mobile-sidebar-close {
+    display: none;
+}
+
+@media (max-width: 850px) {
+    .mobile-menu-btn {
+        display: flex;
+        margin-right: 12px;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .mobile-sidebar-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        width: 32px;
+        height: 32px;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--text-secondary);
+        background: transparent;
+        border: none;
+        margin-left: auto;
+    }
+    
+    .mobile-sidebar-close:hover {
+        color: var(--text-primary);
+    }
+    
+    .sidebar {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: -280px; /* Hide initially */
+        height: 100vh;
+        transition: left var(--transition-normal);
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+    }
+    
+    .sidebar.active {
+        left: 0;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 24px;
+        width: 100%;
+    }
+    
+    .header-left {
+        display: flex;
+        align-items: center;
+    }
+    
+    .app-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    
+    .header-right {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .tools-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .feed-timeline {
+        padding-left: 20px;
+        margin-left: 0;
+    }
+    
+    .timeline-dot {
+        left: -30px;
+        width: 14px;
+        height: 14px;
+        border-width: 3px;
+    }
+}
+
+

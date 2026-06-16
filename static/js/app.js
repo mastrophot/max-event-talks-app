@@ -37,6 +37,9 @@ const elements = {
     themeToggleBtn: document.getElementById('theme-toggle'),
     themeIconMoon: document.querySelector('.theme-icon-moon'),
     themeIconSun: document.querySelector('.theme-icon-sun'),
+    mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
+    mobileSidebarClose: document.getElementById('mobile-sidebar-close'),
+    sidebar: document.querySelector('.sidebar'),
     
     // Toast
     toastContainer: document.getElementById('toast-container')
@@ -54,6 +57,19 @@ function setupEventListeners() {
     // Theme toggle
     if (elements.themeToggleBtn) {
         elements.themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
+    // Mobile Menu Toggle
+    if (elements.mobileMenuToggle) {
+        elements.mobileMenuToggle.addEventListener('click', () => {
+            elements.sidebar.classList.add('active');
+        });
+    }
+    
+    if (elements.mobileSidebarClose) {
+        elements.mobileSidebarClose.addEventListener('click', () => {
+            elements.sidebar.classList.remove('active');
+        });
     }
 
     // Refresh feed
@@ -77,6 +93,8 @@ function setupEventListeners() {
             btn.classList.add('active');
             state.activeFilter = btn.dataset.filter;
             applyFiltersAndSearch();
+            // Close mobile sidebar on selection
+            elements.sidebar.classList.remove('active');
         });
     });
     
@@ -146,12 +164,47 @@ function setLoading(isLoading) {
     if (isLoading) {
         elements.refreshBtn.classList.add('loading');
         elements.loadingState.classList.remove('hidden');
-        elements.feedTimeline.classList.add('hidden');
+        renderSkeletons();
+        elements.feedTimeline.classList.remove('hidden');
         elements.emptyState.classList.add('hidden');
     } else {
         elements.refreshBtn.classList.remove('loading');
         elements.loadingState.classList.add('hidden');
-        elements.feedTimeline.classList.remove('hidden');
+    }
+}
+
+// Render Skeleton Cards during load
+function renderSkeletons() {
+    elements.feedTimeline.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+        const groupEl = document.createElement('div');
+        groupEl.className = 'timeline-group';
+        
+        const dot = document.createElement('div');
+        dot.className = 'timeline-dot';
+        
+        const dateEl = document.createElement('h2');
+        dateEl.className = 'timeline-date';
+        dateEl.textContent = 'Оновлення...';
+        
+        const cardsContainer = document.createElement('div');
+        cardsContainer.className = 'timeline-cards-container';
+        
+        const card = document.createElement('div');
+        card.className = 'skeleton-card';
+        card.innerHTML = `
+            <div class="skeleton-line badge-line"></div>
+            <div class="skeleton-line text-1"></div>
+            <div class="skeleton-line text-2"></div>
+            <div class="skeleton-line text-3"></div>
+            <div class="skeleton-line btn-line"></div>
+        `;
+        cardsContainer.appendChild(card);
+        
+        groupEl.appendChild(dot);
+        groupEl.appendChild(dateEl);
+        groupEl.appendChild(cardsContainer);
+        elements.feedTimeline.appendChild(groupEl);
     }
 }
 
@@ -217,6 +270,14 @@ function applyFiltersAndSearch() {
     }
 }
 
+// Helper to highlight search query in HTML content without breaking tags
+function highlightText(html, query) {
+    if (!query) return html;
+    const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(?![^<>]*>)(${escapedQuery})`, 'gi');
+    return html.replace(regex, '<mark>$1</mark>');
+}
+
 // Render Timeline to DOM
 function renderTimeline() {
     elements.feedTimeline.innerHTML = '';
@@ -237,16 +298,18 @@ function renderTimeline() {
         
         group.items.forEach(item => {
             const card = document.createElement('div');
-            // Add custom modifier class for color coding
             const typeClass = getNormalizeTypeClass(item.type);
             card.className = `release-card type-${typeClass}`;
+            
+            // Highlight text if query is present
+            const finalHtml = highlightText(item.html, state.searchQuery);
             
             card.innerHTML = `
                 <div class="card-header">
                     <span class="badge type-${typeClass}">${item.type}</span>
                 </div>
                 <div class="card-body">
-                    ${item.html}
+                    ${finalHtml}
                 </div>
                 <div class="card-footer">
                     <button class="btn btn-secondary btn-copy-card" style="font-size: 0.8rem; padding: 6px 12px; margin-right: 8px;">
@@ -260,6 +323,12 @@ function renderTimeline() {
                     </button>
                 </div>
             `;
+            
+            // Ensure all links inside the release card open in a new tab
+            card.querySelectorAll('.card-body a').forEach(a => {
+                a.setAttribute('target', '_blank');
+                a.setAttribute('rel', 'noopener noreferrer');
+            });
             
             // Event listener for copy button
             card.querySelector('.btn-copy-card').addEventListener('click', () => {
@@ -327,7 +396,10 @@ function closeModal() {
 async function generateTweetText() {
     if (!state.selectedItem) return;
     
-    elements.tweetTextarea.value = "Генерація твіту...";
+    const editor = document.querySelector('.tweet-editor');
+    if (editor) editor.classList.add('loading');
+    elements.tweetTextarea.value = "";
+    elements.btnPublishX.disabled = true;
     
     try {
         const response = await fetch('/api/generate-tweet', {
@@ -353,6 +425,8 @@ async function generateTweetText() {
         }
     } catch (error) {
         elements.tweetTextarea.value = `Помилка з'єднання: ${error.message}`;
+    } finally {
+        if (editor) editor.classList.remove('loading');
     }
 }
 
@@ -363,8 +437,12 @@ function updateCharCounter(length) {
     elements.charCounter.className = 'char-counter';
     if (length > 280) {
         elements.charCounter.classList.add('danger');
+        elements.btnPublishX.disabled = true;
     } else if (length > 250) {
         elements.charCounter.classList.add('warning');
+        elements.btnPublishX.disabled = false;
+    } else {
+        elements.btnPublishX.disabled = length === 0;
     }
 }
 
