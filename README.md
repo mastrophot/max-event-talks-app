@@ -7,9 +7,15 @@ Web application built with Python Flask and vanilla HTML/JS/CSS that fetches the
 *   **RSS Feed Parsing**: Automatically fetches and parses Google Cloud BigQuery release notes.
 *   **Structured View**: Segregates release entries by date and highlights the type of update (Feature, Change, Deprecation, Issue) using color-coded cards.
 *   **Search & Filters**: Search through updates instantly and filter by categories.
-*   **Tweet Generator**: Generates customized draft tweets based on the update in 3 different styles (*Tech Hype*, *Professional*, *Minimalist*).
+*   **Highlighting**: Search query matches are highlighted directly in the release cards.
+*   **Tweet Generator**: Generates customized draft tweets based on the update in 3 different styles (*Tech Hype*, *Professional*, *Minimalist*) with visual loaders during generation.
+*   **Character Limits Validation**: Disables post actions if the generated tweet exceeds the 280-character limit.
 *   **Quick Share**: Direct integration with X (Twitter) Web Intent and copy-to-clipboard functionality.
-*   **Modern Theme**: Sleek dark UI utilizing CSS variables and modern typography.
+*   **Copy Card Text**: Direct "Copy to Clipboard" button on each card for quick copying of the update details.
+*   **CSV Export**: One-click download button in the header to export all parsed release notes into a `.csv` file.
+*   **Light/Dark Theme Switcher**: Toggle switch in the header that overrides CSS variables and saves selection in `localStorage`.
+*   **Mobile-Friendly Layout**: Optimized sidebar collapse and hamburger navigation menu for smartphones.
+*   **UX skeleton loader**: Renders animated Skeleton Cards during feed fetching for better perceived performance.
 
 ## Tech Stack
 
