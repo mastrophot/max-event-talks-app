@@ -34,6 +34,9 @@ const elements = {
     btnCopy: document.getElementById('btn-copy'),
     btnPublishX: document.getElementById('btn-publish-x'),
     exportCsvBtn: document.getElementById('export-csv-btn'),
+    themeToggleBtn: document.getElementById('theme-toggle'),
+    themeIconMoon: document.querySelector('.theme-icon-moon'),
+    themeIconSun: document.querySelector('.theme-icon-sun'),
     
     // Toast
     toastContainer: document.getElementById('toast-container')
@@ -41,12 +44,18 @@ const elements = {
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     fetchReleases();
     setupEventListeners();
 });
 
 // Event Listeners
 function setupEventListeners() {
+    // Theme toggle
+    if (elements.themeToggleBtn) {
+        elements.themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+
     // Refresh feed
     elements.refreshBtn.addEventListener('click', fetchReleases);
     
@@ -413,4 +422,33 @@ function exportToCSV() {
     link.click();
     document.body.removeChild(link);
     showToast('CSV файл успішно експортовано!', 'success');
+}
+
+// Theme Management
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        if (elements.themeIconMoon && elements.themeIconSun) {
+            elements.themeIconMoon.classList.add('hidden');
+            elements.themeIconSun.classList.remove('hidden');
+        }
+    }
+}
+
+function toggleTheme() {
+    const isLight = document.documentElement.classList.toggle('light-theme');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    
+    if (elements.themeIconMoon && elements.themeIconSun) {
+        if (isLight) {
+            elements.themeIconMoon.classList.add('hidden');
+            elements.themeIconSun.classList.remove('hidden');
+            showToast('Увімкнено світлу тему');
+        } else {
+            elements.themeIconMoon.classList.remove('hidden');
+            elements.themeIconSun.classList.add('hidden');
+            showToast('Увімкнено темну тему');
+        }
+    }
 }

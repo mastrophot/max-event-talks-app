@@ -847,3 +847,119 @@ h1, h2, h3, h4 {
         padding: 24px;
     }
 }
+
+/* Light Theme Variables Override */
+:root.light-theme {
+    --bg-primary: #f8fafc;      /* slate-50 */
+    --bg-secondary: #ffffff;    /* white */
+    --bg-tertiary: #f1f5f9;     /* slate-100 */
+    --border-color: #e2e8f0;    /* slate-200 */
+    
+    --text-primary: #0f172a;    /* slate-900 */
+    --text-secondary: #475569;  /* slate-600 */
+    --text-muted: #64748b;      /* slate-500 */
+}
+
+/* Adjustments for light theme elements */
+:root.light-theme .app-header h1,
+:root.light-theme .sidebar-brand span {
+    background: linear-gradient(to right, #0f172a, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+:root.light-theme .timeline-date {
+    color: var(--text-primary);
+}
+
+:root.light-theme .empty-state h3 {
+    color: var(--text-primary);
+}
+
+:root.light-theme .modal-close:hover {
+    color: var(--text-primary);
+}
+
+:root.light-theme .btn-x-blue {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+:root.light-theme .btn-x-blue:hover {
+    background-color: #1e293b;
+}
+
+:root.light-theme .release-card:hover {
+    border-color: #cbd5e1;
+}
+
+:root.light-theme .btn-secondary {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+:root.light-theme .btn-secondary:hover {
+    background-color: #e2e8f0;
+}
+
+:root.light-theme .search-box input {
+    color: #0f172a;
+    background-color: #ffffff;
+}
+
+:root.light-theme .stat-badge {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+:root.light-theme .stat-badge span {
+    color: #0f172a;
+}
+
+:root.light-theme .nav-btn:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+:root.light-theme .timeline-dot {
+    background-color: var(--bg-primary);
+    box-shadow: 0 0 0 4px var(--bg-primary);
+}
+
+:root.light-theme .tweet-source-preview {
+    background-color: #f8fafc;
+}
+
+:root.light-theme .style-opt-btn {
+    background-color: #f8fafc;
+}
+
+:root.light-theme .tweet-editor textarea {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+:root.light-theme .modal-footer {
+    background-color: #f1f5f9;
+}
+
+.theme-toggle-btn {
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+:root.light-theme .theme-toggle-btn:hover {
+    background-color: #f1f5f9;
+}
+
