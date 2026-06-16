@@ -33,6 +33,7 @@ const elements = {
     charCounter: document.getElementById('char-counter'),
     btnCopy: document.getElementById('btn-copy'),
     btnPublishX: document.getElementById('btn-publish-x'),
+    exportCsvBtn: document.getElementById('export-csv-btn'),
     
     // Toast
     toastContainer: document.getElementById('toast-container')
@@ -48,6 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
     // Refresh feed
     elements.refreshBtn.addEventListener('click', fetchReleases);
+    
+    // Export CSV
+    if (elements.exportCsvBtn) {
+        elements.exportCsvBtn.addEventListener('click', exportToCSV);
+    }
     
     // Search input
     elements.searchInput.addEventListener('input', (e) => {
@@ -234,6 +240,9 @@ function renderTimeline() {
                     ${item.html}
                 </div>
                 <div class="card-footer">
+                    <button class="btn btn-secondary btn-copy-card" style="font-size: 0.8rem; padding: 6px 12px; margin-right: 8px;">
+                        Копіювати
+                    </button>
                     <button class="btn btn-tweet-trigger">
                         <svg class="x-logo" style="width:12px; height:12px; margin-right:6px; fill:currentColor" viewBox="0 0 24 24">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -242,6 +251,13 @@ function renderTimeline() {
                     </button>
                 </div>
             `;
+            
+            // Event listener for copy button
+            card.querySelector('.btn-copy-card').addEventListener('click', () => {
+                navigator.clipboard.writeText(item.text)
+                    .then(() => showToast('Текст оновлення скопійовано!', 'success'))
+                    .catch(() => showToast('Не вдалося скопіювати текст', 'error'));
+            });
             
             // Event listener for tweet button
             card.querySelector('.btn-tweet-trigger').addEventListener('click', () => {
@@ -359,4 +375,42 @@ function showToast(message, type = 'info') {
         toast.style.animation = 'toast-in 0.3s ease reverse forwards';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
+}
+
+// Export parsed release notes to CSV
+function exportToCSV() {
+    if (!state.releases || state.releases.length === 0) {
+        showToast('Немає даних для експорту', 'error');
+        return;
+    }
+    
+    // Prepare CSV rows
+    let csvRows = ["Date,Type,Description,Link"];
+    
+    state.releases.forEach(release => {
+        const date = release.date.replace(/"/g, '""');
+        const link = release.link.replace(/"/g, '""');
+        
+        release.items.forEach(item => {
+            const type = item.type.replace(/"/g, '""');
+            const text = item.text.replace(/"/g, '""');
+            csvRows.push(`"${date}","${type}","${text}","${link}"`);
+        });
+    });
+    
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create temporary download link
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "bigquery_release_notes.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    
+    // Trigger download
+    link.click();
+    document.body.removeChild(link);
+    showToast('CSV файл успішно експортовано!', 'success');
 }
